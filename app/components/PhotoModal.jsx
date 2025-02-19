@@ -9,10 +9,7 @@ const PhotoModal = ({ src, alt, onClose }) => {
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-40"
-      aria-label="Photo Modal"
-    >
+    <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-40">
       <div className="bg-gray-800 p-4 rounded-lg relative border border-gray-600">
         {/* Close Button */}
         <button

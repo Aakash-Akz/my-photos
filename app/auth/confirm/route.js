@@ -1,5 +1,4 @@
 import { createServerClient } from "@supabase/ssr";
-import next from "next";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 

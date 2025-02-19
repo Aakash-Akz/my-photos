@@ -1,8 +1,9 @@
 import React from "react";
-import { supabaseServer } from "../utils/supabaseServerClient";
+import { createServerClient } from "@supabase/ssr";
 import Photo from "./Photo";
+import { cookies } from "next/headers";
 
-async function fetchUserPhotos(user) {
+async function fetchUserPhotos(user, supabaseServer) {
   if (!user) return;
 
   const folderPath = `user_uploads/${user.id}/`;
@@ -17,7 +18,7 @@ async function fetchUserPhotos(user) {
   return data;
 }
 
-async function getPhotoUrls(photos, user) {
+async function getPhotoUrls(photos, user, supabaseServer) {
   return Promise.all(
     photos.map(async (photo) => {
       const { data, error } = await supabaseServer.storage
@@ -32,7 +33,7 @@ async function getPhotoUrls(photos, user) {
   );
 }
 
-async function fetchfavoritePhotos(user) {
+async function fetchfavoritePhotos(user, supabaseServer) {
   const { data, error } = await supabaseServer
     .from("favorites")
     .select("photo_name")
@@ -46,12 +47,25 @@ async function fetchfavoritePhotos(user) {
 }
 
 export default async function PhotoGrid({ favorites = false }) {
+  const cookieStore = cookies();
+
+  const supabaseServer = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABSE_ANON_KEY,
+    {
+      cookies: {
+        get(name) {
+          return cookieStore.get(name)?.value;
+        },
+      },
+    }
+  );
   const {
     data: { user },
   } = await supabaseServer.auth.getUser();
-  const photos = await fetchUserPhotos(user);
-  const photoObjects = await getPhotoUrls(photos, user);
-  const favoritePhotoNames = await fetchfavoritePhotos(user);
+  const photos = await fetchUserPhotos(user, supabaseServer);
+  const photoObjects = await getPhotoUrls(photos, user, supabaseServer);
+  const favoritePhotoNames = await fetchfavoritePhotos(user, supabaseServer);
 
   const photosWithFavorites = photoObjects.map((photo) => ({
     ...photo,
@@ -63,7 +77,7 @@ export default async function PhotoGrid({ favorites = false }) {
     : photosWithFavorites;
 
   return (
-    <div className="grid grid-cols-6 gap-8">
+    <div className="grid grid-cols-6 justify-center gap-8">
       {displayPhotos.map((photo) => (
         <Photo
           key={photo.photoName}
