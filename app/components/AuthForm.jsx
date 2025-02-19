@@ -1,20 +1,28 @@
 "use client";
-
-import { useState } from "react";
-import { supabase } from "../utils/supabaseClient";
+import { React, useState } from "react";
+import supabase from "@/app/utils/supabaseClient";
 import { useRouter } from "next/navigation";
-
-export default function AuthForm() {
-  const [isNewUser, setIsNewUser] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSigningIn, setIsSigningIn] = useState(false);
-  const [isSigningUp, setIsSigningUp] = useState(false);
+const AuthForm = () => {
+  const [isNewUser, setIsNewUser] = new useState(false);
+  const [email, setEmail] = new useState("");
+  const [password, setPassword] = new useState("");
+  const [isSigningIn, setisSigningIn] = new useState(false);
+  const [isSigningUp, setisSigningUp] = new useState(false);
   const router = useRouter();
-
-  async function handleLogin(e) {
+  async function handleSignUp(e) {
     e.preventDefault();
-    setIsSigningIn(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (!error) {
+      setisSigningUp(true);
+    }
+    console.log({ data, error });
+  }
+  async function handleSignIn(e) {
+    e.preventDefault();
+    setisSigningIn(true);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -23,69 +31,51 @@ export default function AuthForm() {
     if (!error) {
       router.push("/photos");
     } else {
-      setIsSigningIn(false);
+      setisSigningIn(false);
     }
   }
-
-  async function handleSignUp(e) {
-    e.preventDefault();
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (!error) {
-      setIsSigningUp(true);
-    }
-    console.log({ data, error });
-  }
-
   let signInMessage = "Sign In";
-
   if (isSigningIn) {
     signInMessage = "Signing In";
   } else if (isNewUser) {
     signInMessage = "Sign Up";
   }
-
   const signUpMessage = (
-    <p className="text-center text-white">
-      Email sent! Check your email to confirm sign up.
-    </p>
+    <p>Email Sent! Please check your email to confirm Sign up.</p>
   );
-
   return (
     <form
-      onSubmit={isNewUser ? handleSignUp : handleLogin}
-      className="space-y-8"
+      className="flex flex-col gap-4 pt-6 items-center justify-center"
+      onSubmit={isNewUser ? handleSignUp : handleSignIn}
     >
       <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         placeholder="Email"
+        className="text-gray-800 bg-gray-300 h-[50px] w-[300px] px-3 border-2 rounded-xl outline-none"
       />
       <input
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-        placeholder="Password"
+        placeholder="password"
+        className="text-gray-800 bg-gray-300 h-[50px] w-[300px] px-3 border-2 rounded-xl outline-none"
       />
       <button
         type="submit"
-        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        className="w-[150px] h-[50px] rounded-full bg-gray-900 text-gray-100"
       >
         {signInMessage}
       </button>
-      <p className="text-center text-white">
+      <p className="text-center mt-10">
         {isNewUser ? (
           <>
             Already have an account?{" "}
             <button
               type="button"
               onClick={() => setIsNewUser(false)}
-              className="text-indigo-400 hover:text-indigo-600"
+              className="text-blue-950 underline"
             >
               Sign In
             </button>
@@ -96,7 +86,7 @@ export default function AuthForm() {
             <button
               type="button"
               onClick={() => setIsNewUser(true)}
-              className="text-indigo-400 hover:text-indigo-600"
+              className="text-blue-950 underline"
             >
               Sign Up
             </button>
@@ -106,4 +96,5 @@ export default function AuthForm() {
       {isSigningUp && signUpMessage}
     </form>
   );
-}
+};
+export default AuthForm;
