@@ -1,134 +1,91 @@
 "use client";
-import { React, useState } from "react";
-import supabase from "@/app/utils/supabaseClient";
+
+import { useState } from "react";
+import { supabase } from "../utils/supabaseClient";
 import { useRouter } from "next/navigation";
 
-const AuthForm = () => {
+export default function AuthForm() {
   const [isNewUser, setIsNewUser] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isSigningIn, setisSigningIn] = useState(false);
-  const [isSigningUp, setisSigningUp] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isSigningUp, setIsSigningUp] = useState(false);
   const router = useRouter();
 
-  async function handleSignUp(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    setErrorMessage("");
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
-      return;
-    }
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (!error) {
-      router.push("/photos");
-      setisSigningUp(true);
-    } else {
-      setErrorMessage(error.message);
-    }
-    console.log({ data, error });
-  }
-
-  async function handleSignIn(e) {
-    e.preventDefault();
-    setErrorMessage("");
-    setisSigningIn(true);
-
+    setIsSigningIn(true);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-
     console.log({ error, data });
-
     if (!error) {
       router.push("/photos");
     } else {
-      setisSigningIn(false);
-      setErrorMessage("Incorrect email or password.");
+      setIsSigningIn(false);
     }
   }
 
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
+  async function handleSignUp(e) {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (!error) {
+      setIsSigningUp(true);
+    }
+    console.log({ data, error });
+  }
 
   let signInMessage = "Sign In";
 
   if (isSigningIn) {
-    signInMessage = "Signing In...";
+    signInMessage = "Signing In";
   } else if (isNewUser) {
     signInMessage = "Sign Up";
   }
 
   const signUpMessage = (
-    <p>Email Sent! Please check your email to confirm sign-up.</p>
+    <p className="text-center text-white">
+      Email sent! Check your email to confirm sign up.
+    </p>
   );
 
   return (
     <form
-      className="flex flex-col gap-4 pt-6 items-center justify-center"
-      onSubmit={isNewUser ? handleSignUp : handleSignIn}
+      onSubmit={isNewUser ? handleSignUp : handleLogin}
+      className="space-y-8"
     >
       <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         placeholder="Email"
-        className="text-gray-800 bg-gray-300 h-[50px] w-[300px] px-3 border-2 rounded-xl outline-none"
       />
-      <div className="relative">
-        <input
-          type={isPasswordVisible ? "text" : "password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          className="text-gray-800 bg-gray-300 h-[50px] w-[300px] px-3 border-2 rounded-xl outline-none"
-        />
-        <button
-          type="button"
-          onClick={togglePasswordVisibility}
-          className="absolute right-4 top-[50%] transform -translate-y-[50%] text-gray-600"
-        >
-          {isPasswordVisible ? "Hide" : "Show"}
-        </button>
-      </div>
-      {isNewUser && (
-        <input
-          type={isPasswordVisible ? "text" : "password"}
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirm Password"
-          className="text-gray-800 bg-gray-300 h-[50px] w-[300px] px-3 border-2 rounded-xl outline-none"
-        />
-      )}
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder="Password"
+      />
       <button
         type="submit"
-        className="w-[150px] h-[50px] rounded-full bg-gray-900 text-gray-100"
+        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
         {signInMessage}
       </button>
-      {errorMessage && <p className="text-red-600 mt-2">{errorMessage}</p>}
-      <p className="text-center mt-10">
+      <p className="text-center text-white">
         {isNewUser ? (
           <>
             Already have an account?{" "}
             <button
               type="button"
-              onClick={() => {
-                setIsNewUser(false);
-                setErrorMessage("");
-              }}
-              className="text-blue-950 underline"
+              onClick={() => setIsNewUser(false)}
+              className="text-indigo-400 hover:text-indigo-600"
             >
               Sign In
             </button>
@@ -138,11 +95,8 @@ const AuthForm = () => {
             Don't have an account?{" "}
             <button
               type="button"
-              onClick={() => {
-                setIsNewUser(true);
-                setErrorMessage("");
-              }}
-              className="text-blue-950 underline"
+              onClick={() => setIsNewUser(true)}
+              className="text-indigo-400 hover:text-indigo-600"
             >
               Sign Up
             </button>
@@ -152,6 +106,4 @@ const AuthForm = () => {
       {isSigningUp && signUpMessage}
     </form>
   );
-};
-
-export default AuthForm;
+}
