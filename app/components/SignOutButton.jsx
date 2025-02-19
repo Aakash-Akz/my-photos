@@ -5,7 +5,7 @@ const SignOutButton = () => {
     <form action="/auth/signout" method="post">
       <button
         type="submit"
-        className="w-[100px] h-[40px] rounded-full bg-gray-800 text-gray-200"
+        className="w-[70px] md:w-[100px] h-[30px] md:h-[40px] text-sm md:text-base rounded-full bg-gray-800 text-gray-200"
       >
         Sign out
       </button>

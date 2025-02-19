@@ -9,17 +9,16 @@ const Photos = () => {
       <Nav />
       <div>
         <div className="text-center">
-          <h1 className="font-bold text-[52px]">Favorites</h1>
-          <p className="font-semibold text-[24px] mb-4">
+          <h1 className="font-bold text-[32px] md:text-[52px] mt-4">
+            Favorites
+          </h1>
+          <p className="font-semibold text-[14px] md:text-[24px] mb-8 md:mb-4">
             See your favorite photos here
           </p>
 
           {/* <PhotoUploader /> */}
         </div>
         <PhotoGrid favorites={true} />
-      </div>
-      <div className="absolute top-4 right-4">
-        <SignOutButton />
       </div>
     </main>
   );

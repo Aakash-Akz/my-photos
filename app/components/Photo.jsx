@@ -18,7 +18,7 @@ const Photo = ({ src, alt, width, height, photoName, isFavorited = false }) => {
     <>
       <div
         style={{ width, height }}
-        className="relative w-[200px] h-[200px] shadow-md border border-white border-opacity-80 rounded-lg overflow-hidden cursor-pointer mt-8"
+        className="relative w-[100px] md:w-[150px] lg:w-[200px] h-[100px] md:h-[150px] lg:h-[200px] shadow-md border border-white border-opacity-80 rounded-lg overflow-hidden cursor-pointer mt-8"
       >
         <form
           action={deletePhoto}

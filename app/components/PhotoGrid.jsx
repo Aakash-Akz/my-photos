@@ -77,14 +77,13 @@ export default async function PhotoGrid({ favorites = false }) {
     : photosWithFavorites;
 
   return (
-    <div className="grid grid-cols-6 justify-center gap-8">
+    <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 mx-2 justify-center gap-2 md:gap-8">
       {displayPhotos.map((photo) => (
         <Photo
           key={photo.photoName}
           src={photo.url}
           alt={`Photo ${photo.photoName}`}
-          width={200}
-          height={200}
+          layout="fill"
           photoName={photo.photoName}
           isFavorited={photo.isFavorited}
         />

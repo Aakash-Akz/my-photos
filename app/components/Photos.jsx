@@ -9,8 +9,10 @@ const Photos = () => {
       <Nav />
       <div>
         <div className="text-center">
-          <h1 className="font-bold text-[52px]">Photo Store</h1>
-          <p className="font-semibold text-[24px] mb-4">
+          <h1 className="font-bold text-[32px] md:text-[52px] mt-4">
+            Photo Store
+          </h1>
+          <p className="font-semibold text-[14px] md:text-[24px] mb-8 md:mb-4">
             Space to store yout favorite photos
           </p>
 
